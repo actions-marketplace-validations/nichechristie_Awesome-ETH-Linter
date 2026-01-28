@@ -2,10 +2,24 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden grid-bg">
+    <section className="relative overflow-hidden">
+      {/* Video background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/hero-bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/60" />
+
       {/* Gradient orbs */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-purple-600/10 blur-[120px]" />
-      <div className="pointer-events-none absolute top-20 left-1/4 h-[300px] w-[400px] rounded-full bg-blue-600/10 blur-[100px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-purple-600/20 blur-[120px]" />
+      <div className="pointer-events-none absolute top-20 left-1/4 h-[300px] w-[400px] rounded-full bg-blue-600/20 blur-[100px]" />
 
       <div className="relative flex flex-col items-center gap-8 px-6 py-28 text-center">
         {/* Floating ETH diamond */}
@@ -37,7 +51,7 @@ export default function Hero() {
             Get Started
           </Link>
           <a
-            href="https://github.com/nichechristie/eth-spec-lint"
+            href="https://github.com/nichechristie/Awesome-ETH-Linter"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 font-semibold text-slate-300 backdrop-blur transition-all hover:border-purple-500/30 hover:bg-white/10"
