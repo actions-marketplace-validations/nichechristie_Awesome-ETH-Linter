@@ -5,3 +5,12 @@ dist/
 build/
 .pytest_cache/
 *.db
+
+# Next.js
+.next/
+out/
+node_modules/
+
+# Test repos (cloned for testing)
+consensus-specs/
+lodestar/
