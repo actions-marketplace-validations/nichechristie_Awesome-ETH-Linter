@@ -91,19 +91,32 @@ export default function ChatWidget() {
     }
   };
 
-  const playTTS = async (text: string, index: number) => {
-    if (playingIndex === index) {
-      audioRef.current?.pause();
-      audioRef.current = null;
-      setPlayingIndex(null);
-      return;
-    }
-
+  const stopPlayback = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    window.speechSynthesis?.cancel();
+    setPlayingIndex(null);
+  };
 
+  const playBrowserTTS = (text: string, index: number) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onend = () => setPlayingIndex(null);
+    utterance.onerror = () => setPlayingIndex(null);
+    setPlayingIndex(index);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const playTTS = async (text: string, index: number) => {
+    if (playingIndex === index) {
+      stopPlayback();
+      return;
+    }
+
+    stopPlayback();
     setPlayingIndex(index);
 
     try {
@@ -113,8 +126,11 @@ export default function ChatWidget() {
         body: JSON.stringify({ text }),
       });
 
-      if (!response.ok) {
-        setPlayingIndex(null);
+      const contentType = response.headers.get("content-type") || "";
+
+      if (!response.ok || !contentType.includes("audio")) {
+        // Fallback to browser speech synthesis
+        playBrowserTTS(text, index);
         return;
       }
 
@@ -129,9 +145,17 @@ export default function ChatWidget() {
         URL.revokeObjectURL(url);
       };
 
-      audio.play();
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        playBrowserTTS(text, index);
+      };
+
+      audio.play().catch(() => {
+        URL.revokeObjectURL(url);
+        playBrowserTTS(text, index);
+      });
     } catch {
-      setPlayingIndex(null);
+      playBrowserTTS(text, index);
     }
   };
 
