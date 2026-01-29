@@ -46,7 +46,9 @@ def scan(ctx: click.Context) -> None:
 
     click.echo("Analyzing client code...")
     analyzer = LodestarAnalyzer()
-    client_fns = analyzer.analyze(config.client.source_globs)
+    # Combine repo_path with source_globs
+    full_globs = [f"{config.client.repo_path}/{g}" for g in config.client.source_globs]
+    client_fns = analyzer.analyze(full_globs)
     click.echo(f"  Found {len(client_fns)} client functions")
 
     click.echo("Building mappings...")
@@ -98,7 +100,8 @@ def check_pr(ctx: click.Context, base: str) -> None:
     resolved = resolve_functions(fns)
 
     analyzer = LodestarAnalyzer()
-    client_fns = analyzer.analyze(config.client.source_globs)
+    full_globs = [f"{config.client.repo_path}/{g}" for g in config.client.source_globs]
+    client_fns = analyzer.analyze(full_globs)
 
     overrides = load_overrides(config.mapping.overrides_file)
     pairs = build_mapping(list(resolved.values()), client_fns, overrides)
@@ -137,7 +140,8 @@ def list_mappings(ctx: click.Context) -> None:
     resolved = resolve_functions(fns)
 
     analyzer = LodestarAnalyzer()
-    client_fns = analyzer.analyze(config.client.source_globs)
+    full_globs = [f"{config.client.repo_path}/{g}" for g in config.client.source_globs]
+    client_fns = analyzer.analyze(full_globs)
 
     overrides = load_overrides(config.mapping.overrides_file)
     pairs = build_mapping(list(resolved.values()), client_fns, overrides)
